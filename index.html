@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>We're Not Really Strangers App</title>
+</head>
+<body>
+  <div id="app">
+    <h1>We're Not Really Strangers</h1>
+    
+    <!-- Language selection buttons -->
+    <button id="englishButton">English</button>
+    <button id="indonesianButton">Indonesian</button>
+    
+    <!-- Edition selection buttons (hidden initially) -->
+    <div id="editionSelection" style="display: none;">
+      <button id="regularEditionButton">Select Regular Edition</button>
+    </div>
+
+    <!-- Card container (hidden initially) -->
+    <div id="cardContainer" style="display: none;">
+      <div id="contentWrapper">
+        <div id="questionCard">
+          <div id="questionText"></div>
+        </div>
+        <!-- Level buttons -->
+        <div id="levelButtons">
+          <button class="levelButton" id="level1Button" onclick="changeLevel(1)">Level 1</button>
+          <button class="levelButton" id="level2Button" onclick="changeLevel(2)">Level 2</button>
+          <button class="levelButton" id="level3Button" onclick="changeLevel(3)">Level 3</button>
+        </div>
+      </div>
+      <!-- Next button -->
+      <button id="nextButton" onclick="handleNextButtonClick()">Next</button>
+    </div>
+    
+    
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
