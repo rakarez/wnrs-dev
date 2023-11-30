@@ -1,23 +1,13 @@
-# Use the official Node.js image as a base image
-FROM node:14
-
-# Set the working directory inside the container
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code to the container
+# build stage
+FROM node:14 AS build-env
+WORKDIR /app
 COPY . .
-
-# Build the Vite app
+RUN npm install
 RUN npm run build
 
-# Expose the port that the application will run on
-EXPOSE 8080
-
-# Define the command to run the application
-CMD ["npm", "run", "start"]
+# production stage
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-env /app/dist /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
