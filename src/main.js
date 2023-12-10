@@ -1,6 +1,6 @@
 // main.js
 import './style.css';
-import { regular } from './questions.js';
+import { regularEnglish, regularIndonesia } from './questions.js';
 
 let shuffledQuestions = [];
 let currentQuestionIndex = 0;
@@ -11,6 +11,8 @@ function handleLanguageSelection(language) {
   document.getElementById('englishButton').style.display = 'none';
   document.getElementById('indonesianButton').style.display = 'none';
   document.getElementById('editionSelection').style.display = 'block';
+
+  window.selectedLanguage = language;
 }
 
 function handleEditionSelection(edition) {
@@ -21,33 +23,26 @@ function handleEditionSelection(edition) {
   currentLevel = 1;
 
   try {
-    // Directly access the property based on the current level
-    const currentLevelQuestions = regular['levelOne'];
-
-    // Add console logs to check the type and content of currentLevelQuestions
-    // console.log('Type of currentLevelQuestions:', typeof currentLevelQuestions);
-    // console.log('Content of currentLevelQuestions:', currentLevelQuestions);
+    const questions = window.selectedLanguage === 'English' ? regularEnglish : regularIndonesia;
+    const currentLevelQuestions = questions[`level${currentLevel}`];
 
     // Check if currentLevelQuestions is an array using a more explicit check
     if (Array.isArray(currentLevelQuestions) && currentLevelQuestions.length > 0) {
-      // Log the content of the array
-      // console.log('Content of currentLevelQuestions:', currentLevelQuestions);
 
       // Shuffle the questions array for the initial level
       shuffledQuestions = shuffleArray(currentLevelQuestions);
       displayQuestion();
     } else {
-      // console.error('Error in handleEditionSelection: Questions are not an array or are empty');
-      // console.log('Complete regular object:', JSON.stringify(regular, null, 2));
+      // Handle the case when questions are not available
+      console.error('Error: Questions are not available for the selected language and edition');
+
+      // If questions are not available for the initial level, set the current level to 0
+      currentLevel = 0;
     }
   } catch (error) {
-    // console.error('Error in handleEditionSelection:', error);
+    console.error('Error in handleEditionSelection:', error);
   }
 }
-
-
-
-
 
 function displayQuestion() {
   const questionTextElement = document.getElementById('questionText');
@@ -64,27 +59,21 @@ function changeLevel(newLevel) {
   currentQuestionIndex = 0; // Reset currentQuestionIndex to zero when changing the level
 
   try {
-    const currentLevelQuestions = regular[`level${currentLevel}`];
-
-    // Log additional information for debugging
-    console.log('Current level:', currentLevel);
-    console.log('Content of regular object:', regular);
-    console.log('Type of currentLevelQuestions:', typeof currentLevelQuestions);
-    console.log('Content of currentLevelQuestions:', currentLevelQuestions);
+    const questions = window.selectedLanguage === 'English' ? regularEnglish : regularIndonesia;
+    const currentLevelQuestions = questions[`level${currentLevel}`];
 
     // Check if currentLevelQuestions is an array and not empty
     if (Array.isArray(currentLevelQuestions) && currentLevelQuestions.length > 0) {
       shuffledQuestions = shuffleArray(currentLevelQuestions);
       displayQuestion();
     } else {
-      console.error('Error in changeLevel: Questions are not an array or are empty');
-      console.log('Complete regular object:', JSON.stringify(regular, null, 2));
+      // Handle the case when questions are not available
+      console.error('Error in changeLevel: Questions are not available for the selected language and edition');
     }
   } catch (error) {
     console.error('Error in changeLevel:', error);
   }
 }
-
 
 
 function shuffleArray(array) {
