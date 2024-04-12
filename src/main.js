@@ -1,6 +1,6 @@
 // main.js
 import './style.css';
-import { regularEnglish, regularIndonesia } from './questions.js';
+import { regularEnglish, regularIndonesia, datingEnglish, datingIndonesia } from './questions.js';
 
 let shuffledQuestions = [];
 let currentQuestionIndex = 0;
@@ -18,30 +18,12 @@ function handleLanguageSelection(language) {
 function handleEditionSelection(edition) {
   document.getElementById('editionSelection').style.display = 'none';
   document.getElementById('cardContainer').style.display = 'block';
+  
+  // Keep track of the selected edition
+  window.selectedEdition = edition;
 
-  // Initialize the current level to 1 when the edition is selected
-  currentLevel = 1;
-
-  try {
-    const questions = window.selectedLanguage === 'English' ? regularEnglish : regularIndonesia;
-    const currentLevelQuestions = questions[`level${currentLevel}`];
-
-    // Check if currentLevelQuestions is an array using a more explicit check
-    if (Array.isArray(currentLevelQuestions) && currentLevelQuestions.length > 0) {
-
-      // Shuffle the questions array for the initial level
-      shuffledQuestions = shuffleArray(currentLevelQuestions);
-      displayQuestion();
-    } else {
-      // Handle the case when questions are not available
-      console.error('Error: Questions are not available for the selected language and edition');
-
-      // If questions are not available for the initial level, set the current level to 0
-      currentLevel = 0;
-    }
-  } catch (error) {
-    console.error('Error in handleEditionSelection:', error);
-  }
+  // Automatically load and display the first question of the first level
+  changeLevel(1);
 }
 
 function displayQuestion() {
@@ -56,22 +38,32 @@ function displayQuestion() {
 
 function changeLevel(newLevel) {
   currentLevel = newLevel;
-  currentQuestionIndex = 0; // Reset currentQuestionIndex to zero when changing the level
+  currentQuestionIndex = 0; // Reset currentQuestionIndex when change the level
 
-  try {
-    const questions = window.selectedLanguage === 'English' ? regularEnglish : regularIndonesia;
-    const currentLevelQuestions = questions[`level${currentLevel}`];
+  let questions;
 
-    // Check if currentLevelQuestions is an array and not empty
-    if (Array.isArray(currentLevelQuestions) && currentLevelQuestions.length > 0) {
-      shuffledQuestions = shuffleArray(currentLevelQuestions);
-      displayQuestion();
-    } else {
-      // Handle the case when questions are not available
-      console.error('Error in changeLevel: Questions are not available for the selected language and edition');
-    }
-  } catch (error) {
-    console.error('Error in changeLevel:', error);
+  switch(window.selectedEdition) {
+    case 'Regular':
+      questions = window.selectedLanguage === 'English' ? regularEnglish : regularIndonesia;
+      break;
+    case 'Dating':
+      questions = window.selectedLanguage === 'English' ? datingEnglish : datingIndonesia;
+      break;
+    default:
+      console.error(`Invalid edition: ${window.selectedEdition}`);
+      break;
+  }
+  
+  let currentLevelQuestions = questions[`level${currentLevel}`];
+
+  if (Array.isArray(currentLevelQuestions) && currentLevelQuestions.length > 0) {
+    shuffledQuestions = shuffleArray(currentLevelQuestions);
+    console.log(`Shuffled questions for level${currentLevel}: ${JSON.stringify(shuffledQuestions)}`);
+    displayQuestion();
+  } else {
+    // Handle the case when questions are not available
+    document.getElementById('questionText').textContent = "No questions available for this level.";
+    console.error('Error in changeLevel: Questions are not available for the selected language and edition');
   }
 }
 
@@ -101,6 +93,10 @@ document.getElementById('indonesianButton').addEventListener('click', () => {
 
 document.getElementById('regularEditionButton').addEventListener('click', () => {
   handleEditionSelection('Regular');
+});
+
+document.getElementById('datingEditionButton').addEventListener('click', () => {
+  handleEditionSelection('Dating'); // "Dating" is just an identifier to distinguish between editions.
 });
 
 // Event listeners for level buttons
